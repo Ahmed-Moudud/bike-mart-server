@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const port = process.env.PORT || 5000;
 
@@ -14,7 +14,7 @@ app.use(express.json());
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.y6l8m1u.mongodb.net/?retryWrites=true&w=majority`;
-console.log(uri);
+
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 async function run(){
@@ -27,6 +27,12 @@ async function run(){
             res.send(options);
         })
 
+        app.post('/products', async(req, res) => {
+            const product = req.body;
+            const result = await productCollection.insertOne(product);
+            res.send(result);
+        })
+
         app.get('/allproducts', async(req, res) => {
             const query = {};
             const options = await productCollection.find(query).toArray();
@@ -37,6 +43,13 @@ async function run(){
             const category = req.params.category;
             const query = {category};
             const items = await productCollection.find(query).toArray();
+            res.send(items);
+        })
+
+        app.get('/allproducts/:id', async(req, res) => {
+            const id = req.params.id;
+            const query = {category_id: id};
+            const items = await productCollection.findOne(query);
             res.send(items);
         })
     }
