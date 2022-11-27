@@ -21,6 +21,7 @@ async function run(){
     try {
         const productCollection = client.db('bikeMart').collection('products');
         const usersCollection = client.db('bikeMart').collection('users');
+        const bookingCollection = client.db('bikeMart').collection('bookings');
 
         app.get('/products', async(req, res) => {
             const query = {};
@@ -57,6 +58,23 @@ async function run(){
         app.post('/users', async(req, res) => {
             const user = req.body;
             const result = await usersCollection.insertOne(user);
+            res.send(result);
+        })
+
+        app.post('/bookings', async(req, res) => {
+            const booking = req.body
+            const query = {
+                productName: booking.productName,
+                email: booking.email
+            }
+
+            const alreadyBooked = await bookingCollection.find(query).toArray();
+
+            if(alreadyBooked.length){
+                const message = `${booking.productName} is already booked`;
+                return res.send({acknowledged: false, message})
+            }
+            const result = await bookingCollection.insertOne(booking);
             res.send(result);
         })
 
