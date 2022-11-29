@@ -41,6 +41,13 @@ async function run(){
             res.send(options);
         })
 
+        app.get('/allproducts/:email', async(req, res) => {
+            const email = req.params.email;
+            const query = {email};
+            const sellerproducts = await productCollection.find(query).toArray();
+            res.send(sellerproducts);
+        })
+
         app.get('/products/:category', async(req, res) => {
             const category = req.params.category;
             const query = {category};
@@ -79,6 +86,13 @@ async function run(){
             const query = {email}
             const user = await usersCollection.findOne(query);
             res.send({isSeller: user?.role === 'seller'})
+        })
+
+        app.get('/users/buyer/:email', async(req, res) => {
+            const email = req.params.email;
+            const query = {email};
+            const user = await usersCollection.findOne(query);
+            res.send({isBuyer: user?.role === 'buyer'})
         })
 
         app.get('/bookings', async(req, res) => {
