@@ -38,6 +38,7 @@ async function run(){
         app.get('/allproducts', async(req, res) => {
             const query = {};
             const options = await productCollection.find(query).toArray();
+            
             res.send(options);
         })
 
@@ -48,17 +49,18 @@ async function run(){
             res.send(sellerproducts);
         })
 
-        app.get('/products/:category', async(req, res) => {
-            const category = req.params.category;
-            const query = {category};
+        app.get('/allproducts/:category_id', async(req, res) => {
+            const category_id = req.params.category_id;
+            const query = {category_id};
             const items = await productCollection.find(query).toArray();
             res.send(items);
         })
 
         app.get('/allproducts/:id', async(req, res) => {
             const id = req.params.id;
-            const query = {category_id: id};
+            const query = {category_id};
             const items = await productCollection.findOne(query);
+            console.log(query);
             res.send(items);
         })
 
@@ -73,6 +75,20 @@ async function run(){
             const result = await usersCollection.insertOne(user);
             res.send(result);
         })
+
+        app.get('/users/sellers', async(req, res) => {
+          const sellers = req.body;
+           const query = {"role" : "seller" };
+           const result = await usersCollection.find(query).toArray();
+            res.send(result);
+        })
+
+        app.get('/users/buyers', async(req, res) => {
+            const buyers = req.body;
+             const query = {"role" : "buyer" };
+             const result = await usersCollection.find(query).toArray();
+              res.send(result);
+          })
 
         app.get('/users/admin/:email', async (req, res) => {
             const email = req.params.email;
